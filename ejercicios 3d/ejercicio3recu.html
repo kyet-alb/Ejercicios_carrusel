@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Propuesta 3: Interactivo</title>
+    <style> body { margin: 0; overflow: hidden; } </style>
+</head>
+<body>
+    <div style="position: absolute; top: 10px; left: 10px; color: white; font-family: sans-serif; background: rgba(0,0,0,0.5); padding: 10px;">
+        <p><strong>Controles:</strong></p>
+        <p>Flechas Izq/Der: Mover (Traslación)</p>
+        <p>Flechas Arriba/Abajo: Girar (Rotación)</p>
+        <p>Teclas + / -: Escalar (Tamaño)</p>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
+
+        // 1. CONFIGURACIÓN BÁSICA
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x222222);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // 2. CREAR EL CUBO (CORREGIDO)
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshNormalMaterial(); 
+        
+        // AQUÍ ESTABA EL ERROR: Faltaba crear la malla (Mesh) uniendo geometría y material
+        const cube = new THREE.Mesh(geometry, material);
+        
+        // Ahora sí podemos agregarlo a la escena
+        scene.add(cube);
+        
+        // Ejes de ayuda
+        const axesHelper = new THREE.AxesHelper(5);
+        scene.add(axesHelper);
+
+        camera.position.z = 5;
+
+        // 3. CONTROLES DE TECLADO
+        const teclas = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false,
+            Plus: false,
+            Minus: false
+        };
+
+        window.addEventListener('keydown', (e) => {
+            if(e.key === "+") teclas.Plus = true;
+            if(e.key === "-") teclas.Minus = true;
+            if(teclas.hasOwnProperty(e.key)) teclas[e.key] = true;
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if(e.key === "+") teclas.Plus = false;
+            if(e.key === "-") teclas.Minus = false;
+            if(teclas.hasOwnProperty(e.key)) teclas[e.key] = false;
+        });
+
+        // 4. BUCLE DE ANIMACIÓN
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // TRASLACIÓN (Eje X)
+            if (teclas.ArrowLeft) cube.position.x -= 0.1;
+            if (teclas.ArrowRight) cube.position.x += 0.1;
+
+            // ROTACIÓN (Eje Y)
+            if (teclas.ArrowUp) cube.rotation.y += 0.05; // Ajustado un poco la velocidad
+            if (teclas.ArrowDown) cube.rotation.y -= 0.05;
+
+            // ESCALADO (Tamaño uniforme)
+            // Evitamos que el cubo desaparezca (escala 0) o sea infinito
+            if (teclas.Plus) cube.scale.multiplyScalar(1.05); 
+            if (teclas.Minus) cube.scale.multiplyScalar(0.95); 
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
