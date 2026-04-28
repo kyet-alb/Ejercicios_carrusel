@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monografía: Curvas Paramétricas</title>
+    <style>
+        /* --- ESTILOS GENERALES (Reset básico) --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #fcfcfc; /* Fondo casi blanco como en el video */
+            color: #24292e;
+            line-height: 1.6;
+        }
+
+        /* --- LAYOUT PRINCIPAL --- */
+        .container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        /* Columna Izquierda: Contenido */
+        main {
+            flex: 3; /* Ocupa el 75% del ancho */
+            padding-right: 60px;
+        }
+
+        /* Columna Derecha: Índice Flotante */
+        aside {
+            flex: 1; /* Ocupa el 25% del ancho */
+            position: relative;
+        }
+
+        /* --- ESTILOS DEL CONTENIDO (MAIN) --- */
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #1b1f23;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 50px;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            padding-top: 20px; /* Espacio para el scroll anchor */
+            color: #24292e;
+            /* border-bottom: 1px solid #eaecef; */
+            padding-bottom: 10px;
+        }
+
+        h3 {
+            padding-left: 30px;
+            font-size: 1.25rem;
+            margin-top: 30px;
+            margin-bottom: 10px;
+            color: #24292e;
+        }
+        
+        h4 {
+            padding-left: 50px;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #24292e;
+        }
+
+        p {
+            padding-left: 50px;
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        ul {
+            padding-left: 50px;
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        .lado {
+            /* font-size: 20px; */
+            padding-left: 5px;
+        }
+
+        li {
+            /* padding-left: -22px; */
+            margin-bottom: 8px;
+        }
+
+        /* Cajas de fórmulas matemáticas */
+        .math-block {
+            margin-left: 20px;
+            padding-left: 80px;
+            background-color: #f6f8fa;
+            padding: 10px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.9em;
+            border: 1px solid #e1e4e8;
+        }
+
+        /* Efecto de resaltado temporal al hacer click en el índice */
+        .highlight-section {
+            animation: flashBlue 1s ease-out;
+        }
+
+        @keyframes flashBlue {
+            0% { background-color: #dbedff; }
+            100% { background-color: transparent; }
+        }
+
+        /* --- ESTILOS DEL ÍNDICE FLOTANTE (ASIDE) --- */
+        .toc-container {
+            position: sticky; 
+            top: 40px;            
+            width: 100%;
+            max-width: 300px;
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            font-size: 0.85rem;
+        }
+        
+        /* .toc-container {
+            position: sticky;       
+            top: 50%; 
+            transform: translateY(-50%);
+            
+            background: white;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        } */
+
+        .toc-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: block;
+            color: #586069;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .toc-list li {
+            margin-bottom: 8px;
+        }
+
+        .toc-link {
+            padding-left: 200px;
+            text-decoration: none;
+            /* font-size: 10px; */
+            color: #586069;
+            display: block;
+            padding: 4px 0;
+            transition: color 0.2s;
+        }
+
+        .toc-link:hover {
+            color: #0366d6; /* Azul GitHub/Link */
+        }
+
+        /* Clase activa que añade JS cuando haces scroll */
+        .toc-link.active {
+            color: #0366d6;
+            font-weight: 600;
+            border-left: 2px solid #0366d6;
+            padding-left: 8px;
+        }
+
+        /* Sub-items indentados */
+        .toc-sublist {
+            list-style: none;
+            margin-top: 5px;
+            padding-left: 15px;
+            border-left: 1px solid #e1e4e8;
+        }
+        
+        .toc-sublist .toc-link {
+            font-size: 0.8rem;
+        }
+
+        header .logo{
+    font-weight: bold;
+}
+
+header nav a{
+    margin-left: 30px;
+}
+
+header{
+    width: 1140px;
+    max-width: 90%;
+    margin: auto;
+    height: 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 100;
+}
+
+        /* Responsividad para móviles */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            aside {
+                display: none; /* Ocultar índice en móvil o ponerlo arriba */
+            }
+            main {
+                padding-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">KYET ALBERT ARENAS LLAMOCCA</div>
+        <nav>
+            <a href="../index.html" onclick="intentarCerrarYPaginaInicio(event)">Home</a>
+            <a href="">Contact</a>
+            <a href="">Info</a>
+        </nav>
+    </header>
+
+    <script>
+    function intentarCerrarYPaginaInicio(e) { 
+        window.close();
+    }
+</script>
+
+<div class="container">
+    
+    <!-- COLUMNA IZQUIERDA: TEXTO -->
+    <main>
+        <h1 id="curvas_parame">CURVAS PARAMÉTRICAS</h1>
+        <p>Para desarrollar una monografía sobre curvas paramétricas es fundamental estructurarla desde los conceptos básicos hasta las aplicaciones prácticas.</p>
+
+        <section id="definicion">
+            <h2>1. Definición y fundamentos matemáticos</h2>
+            <p>Una curva paramétrica se define como el conjunto de puntos en un espacio euclidiano (R² o R³) cuyas coordenadas son funciones continuas de una variable independiente, denominada parámetro, usualmente denotada como <em>t</em>. A diferencia de la representación implícita (F(x,y)=0) o explícita (y=f(x)), la forma paramétrica permite describir la geometría mediante vectores de posición que dependen directamente del parámetro.</p>
+            
+            <p>Matemáticamente, una curva paramétrica C(t) en R^n se expresa como:</p>
+            <div class="math-block">
+                C = [ x(t), y(t), z(t) ], t ∈ [a,b]
+            </div>
+            <p>Donde x(t), y(t) y z(t) son funciones escalares continuas y diferenciables. El dominio del parámetro t suele normalizarse [0,1] para facilitar los cálculos diferenciales.</p>
+            
+            <p>La ventaja fundamental de esta representación radica en su capacidad para describir geometrías complejas, incluyendo aquellas que no son funciones únicas (como círculos o espirales, donde un valor de x puede corresponder a múltiples valores de y), y proporciona una dirección natural a lo largo de la curva, lo cual es esencial para aplicaciones como la animación de trayectorias o el barrido de superficies.</p>
+        </section>
+
+        <section id="clasificacion">
+            <h2>1.2. Clasificación de curvas paramétricas</h2>
+            <p>Las curvas paramétricas en gráficos se clasifican según cómo los "puntos de control" influyen en la geometría resultante. Esta distinción es vital para las herramientas de modelado 3D y los algoritmos de interpolación de animación.</p>
+
+            <h3 id="curvas">1.2.1. Curvas de Bézier</h3>
+            <p>Las curvas de Bézier son la base de muchas herramientas de dibujo vectorial (como las rutas en SVG o las herramientas "Pen" en software de diseño). Matemáticamente, se construyen utilizando los Polinomios de Bernstein como funciones base.</p>
+            <p>Para una curva de Bézier cúbica (la más común en gráficos por su suavidad y bajo costo), definida por cuatro puntos de control P₀, P₁, P₂, P₃ la ecuación es:</p>
+            <div class="math-block">
+                B(t) = (1-t)³P₀ + 3(1-t)²tP₁ + 3(1-t)t²P₂ + t³P₃, t ∈ [0,1]
+            </div>
+            
+            <h4>Importancia en la Computación Gráfica:</h4>
+            <ul>
+                <li>
+                    <strong>Algoritmo de De Casteljau:</strong> 
+                    Este método es preferido frente a la evaluación polinómica 
+                    directa —la cual presenta inestabilidad numérica en grados 
+                    elevados— debido a su estabilidad y eficiencia. Su naturaleza 
+                    recursiva, basada en interpolaciones lineales, facilita la 
+                    subdivisión de curvas, una propiedad crítica para el renderizado 
+                    adaptativo que permite aumentar la resolución geométrica solo en 
+                    zonas de alta curvatura.
+                </li>
+                <li>
+                    <strong>Interpolación en Animación:</strong> 
+                    En los editores de curvas, las curvas de Bézier cúbicas son 
+                    fundamentales para gestionar la transición entre keyframes. 
+                    Mediante la manipulación de los puntos de control, es posible 
+                    ajustar las tangentes y, por consiguiente, definir la aceleración 
+                    y deceleración del movimiento, logrando efectos de easing que 
+                    dotan de fluidez a la animación.
+                </li>
+            </ul>
+
+            <h3 id="splines">1.2.2. Splines (B-Splines y NURBS)</h3>
+            <p>Mientras que Bézier tiene control global (mover un punto afecta toda 
+                la curva), los Splines introducen el concepto de soporte local, 
+                crucial para modelar objetos complejos sin afectar regiones adyacentes.
+            </p>
+            <p>Una B-Spline utiliza un vector de nodos (knot vector) U para definir dónde 
+                y cómo las funciones base se activan. Esto permite que una curva esté 
+                compuesta por múltiples segmentos polinómicos unidos con continuidad 
+                garantizada (C² o G²).
+            </p>
+            <p>En gráficos, las B-Splines uniformes son comunes en trayectorias de cámara, 
+                ya que garantizan suavidad sin picos bruscos.
+            </p>
+            
+            <h4>NURBS (Non-Uniform Rational B-Splines):</h4>
+            <p>Las NURBS son el estándar de oro en modelado de precisión. 
+                Introducen pesos Wi, para cada punto de control, convirtiendo 
+                la curva en una función racional (cociente de polinomios).
+            </p>
+            <div class="math-block">
+                C(t) = (∑ w_i P_i N_(i,p)(t)) / (∑ w_i N_(i,p)(t))
+            </div>
+            </section>
+            <section id="importancia">
+                <h2>1.3. Importancia en el Modelado Gráfico:</h2> 
+                <p>
+                    
+                    La superioridad de las NURBS radica en su capacidad de definir 
+                    formas cónicas con exactitud matemática, superando la precisión 
+                    de aproximación de las curvas de Bézier estándar. Aunque este 
+                    nivel de detalle es un requisito técnico en el diseño industrial 
+                    y CAD, su costo computacional acentuado por el cálculo de la 
+                    división racional limita su aplicación directa en videojuegos. 
+                    Por ello, es frecuente que las NURBS sean teseladas o convertidas 
+                    a mallas de polígonos para optimizar la representación en tiempo real.
+                </p>
+            </section>
+
+        <section id="propiedades">
+            <h2>1.4. Propiedades y ventajas de la representación paramétrica</h2>
+            <ul>
+                <li>
+                    <strong>Evaluación Bajo Demanda (Lazy Evaluation):</strong> 
+                    Optimiza el uso de la VRAM al no almacenar la geometría de forma 
+                    estática. La curva se define como un objeto ligero compuesto 
+                    únicamente por puntos de control y coeficientes, generando los 
+                    vértices dinámicamente mediante teselación solo durante el renderizado. 
+                    Esto facilita la implementación de niveles de detalle (LOD) adaptativos, 
+                    ajustando la densidad de evaluación según la proximidad a la cámara.
+                </li>
+
+                <li>
+                    <strong>Continuidad Geométrica Garantizada:</strong> 
+                    La construcción matemática de estas curvas asegura la continuidad en 
+                    la primera (C¹) y segunda (C²) derivada, lo que garantiza transiciones 
+                    suaves en las tangentes y en la curvatura. Esto elimina artefactos 
+                    visuales en los reflejos especulares, un problema común en mallas 
+                    poligonales que, para alcanzar una estética similar, requieren una 
+                    alta densidad de subdivisión o técnicas complejas de normal mapping.
+                </li>
+                
+                <li>
+                    <strong>Transformaciones Exactas:</strong> 
+                    Las operaciones de traslación, rotación y escalado se ejecutan 
+                    exclusivamente sobre los puntos de control. Esta propiedad permite 
+                    transformar la curva manteniendo su integridad matemática exacta, 
+                    evitando la acumulación de errores de redondeo que suelen surgir 
+                    al manipular geometrías basadas en polígonos.
+                </li>
+                
+                <li>
+                    <strong>Cálculo Analítico de Normales:</strong> 
+                    A diferencia de las mallas, donde las normales deben interpolarse a 
+                    partir de vértices adyacentes, en las curvas paramétricas el 
+                    vector normal se obtiene analíticamente mediante el producto 
+                    cruz de sus derivadas primera y segunda. Esto provee datos 
+                    precisos para modelos de iluminación avanzados (como Phong o PBR), 
+                    garantizando una respuesta lumínica de alta fidelidad.
+                </li>
+            </ul>
+        </section>
+
+        <section id="aplicaciones_cad">
+            <h2>1.5. Aplicaciones en el diseño asistido por computadora (CAD)</h2>
+            <ul>
+                <li>
+                    <strong>Visualización en Tiempo Real:</strong> 
+                    Para garantizar una tasa de refresco fluida (60 FPS) 
+                    en entornos CAD, se emplea la teselación adaptativa. 
+                    Este proceso consiste en evaluar la curvatura local de la
+                    NURBS para generar una malla poligonal temporal optimizada, 
+                    cuya densidad se ajusta dinámicamente según la tolerancia visual 
+                    requerida antes de ser procesada por la GPU.
+                </li>
+                
+                <li>
+                    <strong>Deformación y Esculpido Orgánico:</strong> 
+                    Las curvas paramétricas funcionan como estructuras de control 
+                    (espinas dorsales o lattices) en el modelado orgánico. 
+                    Al manipular sus puntos de control, el sistema recalcula la 
+                    posición de los vértices asociados mediante interpolación, lo 
+                    que permite realizar deformaciones suaves y no destructivas sobre 
+                    la geometría base.
+                </li>
+                
+                <li>
+                    <strong>Generación Procedural de Geometría:</strong> 
+                    En entornos de programación gráfica (como Python o JavaScript), 
+                    estas curvas actúan como trayectorias maestras para procesos 
+                    constructivos:
+                    <ul>
+                        <li>
+                            <em>Barrido (Sweeping):</em> 
+                            Extrusión de un perfil bidimensional a lo largo de una 
+                            curva tridimensional para formar volúmenes como tuberías 
+                            o estructuras complejas.
+                        </li>
+                        <li>
+                            <em>Lofting:</em> 
+                            Creación de superficies de transición mediante la 
+                            interpolación entre múltiples secciones curvas, ideal para 
+                            modelar formas aerodinámicas o superficies de alta curvatura.
+                        </li>
+                    </ul>
+                </li>
+                
+                <li>
+                    <strong>Precisión en UI y Gráficos Vectoriales:</strong> 
+                    En la representación 2D y planos técnicos, las curvas de Bézier 
+                    son indispensables. Su capacidad para definir contornos escalables 
+                    sin pérdida de resolución asegura que las anotaciones, cotas y esquemas 
+                    técnicos mantengan una nitidez absoluta, independientemente del factor 
+                    de zoom aplicado.
+                </li>
+            </ul>
+        </section>
+
+        <section>
+            <h1 id="mallas_poligonales">2. MALLAS POLIGONALES</h1>
+        <!-- <p>Para desarrollar una monografía sobre curvas paramétricas es fundamental estructurarla desde los conceptos básicos hasta las aplicaciones prácticas.</p> -->
+
+        </section>
+
+        <section id="vertices_aristas_caras">
+            <h2>2.1 Vertices, Aristas y Caras</h2>
+            <p>
+                Los tres componentes fundamentales de cualquier malla poligonal son:
+            </p>
+            <h3 id="vertices">2.2.1. Vertices</h3>
+            <p>Son puntos en el espacio euclidiano R^3, definidos por sus coordenadas (x,y,z). Además de la posición geométrica, los vértices suelen almacenar atributos adicionales necesarios para el sombreado (shading), como: </p>
+            <ul>
+                <li>
+                    <strong>Vectores normales </strong> 
+                    Para calculos de iluminación
+                </li>
+                <li>
+                    <strong>Coordenadas de textura </strong> 
+                    Para mapear imágenes sobre la superficie.
+                </li>
+                <li>
+                    <strong>Colores o pesos de animación </strong> 
+                    Skin weights para deformaciones en personajes animados.
+                </li>
+            </ul>
+            <h3 id="aristas">2.2.2. Aristas</h3>
+            <p>Son segmentos de línea que conectan dos vértices. Topológicamente, una arista define la frontera entre dos caras adyacentes. En una malla cerrada (manifold), cada arista pertenece exactamente a dos caras.</p>
+            <h3 id="caras">2.2.3. Caras</h3>
+            <p>Las caras (F) son las unidades superficiales de la malla, formadas por secuencias ordenadas de vértices y aristas que encierran un área plana. Se distinguen tres tipos principales según su topología: </p>
+            <ul>
+                <li>
+                    <strong>Triángulos</strong> 
+                    Al tener siempre tres vértices, garantizan planitud y convexidad absoluta. Esta estabilidad geométrica es crucial para el renderizado en tiempo real, siendo la unidad básica de cálculo para las tarjetas gráficas.
+                </li>
+                <li>
+                    <strong>Cuadriláteros</strong> 
+                    Compuestos por cuatro vértices, son esenciales en el modelado estructurado. Su uso permite mantener una topología limpia mediante edge loops, lo cual es vital para lograr subdivisiones de superficie suaves y deformaciones animadas naturales.
+                </li>
+                <li>
+                    <strong>N.gons</strong> 
+                    Faces con cinco o más vértices. Aunque útiles para la rapidez en el modelado preliminar, no son primitivas nativas para la mayoría de los pipelines de renderizado, requiriendo una triangulación previa para su visualización correcta.
+                </li>
+            </ul>
+        </section>
+
+        <section id="tipos_mallas">
+            <h2>2.2 Tipos de mallas</h2>
+            <p>
+                Dependiendo de la organización de la conectividad entre vértices, distinguimos dos categorías principales con implicaciones computacionales distintas:
+            </p>
+            <h3 id="mallas_regulares">2.2.1. Mallas Regulares</h3>
+            <p>Basadas en una matriz de índices (i,j), donde la vecindad es implícita.</p>
+            <ul>
+                <li>
+                    <strong>Ventajas</strong> 
+                    Optimización extrema de memoria y cálculo, ideales para simulaciones numéricas (CFD, terrenos).
+                </li>
+                <li>
+                    <strong>Limitaciones</strong> 
+                    Poca adaptabilidad a geometrías irregulares; el detalle local requiere un aumento global de la resolución.
+                </li>                
+            </ul>
+            <h3 id="mallas_irregulares">2.2.2. Mallas Irregulares</h3>
+            <p>La conectividad se almacena explícitamente, permitiendo una topología libre.</p>
+            <ul>
+                <li>
+                    <strong>Ventajas</strong> 
+                    Soportan densidad variable (refinamiento adaptativo), optimizando recursos al detallar solo las zonas complejas.
+                </li>
+                <li>
+                    <strong>Aplicaciones</strong> 
+                    Modelado orgánico, ingeniería inversa (escaneos) y piezas CAD con topologías no uniformes.
+                </li>                
+            </ul>
+        </section>
+
+        <section id="representacion_mallas">
+            <h2>2.3. Representación de mallas</h2>
+            <h3 id="comparativas_estructuras">2.3.1. Comparativas de Estructuras</h3>
+            <ul>
+                <li>
+                    <strong>Lista de Triángulos</strong> 
+                    Almacena solo índices de vértices. Es compacta pero ineficiente para consultar adyacencias debido a la falta de topología explícita.
+                </li>
+                <li>
+                    <strong>Half-Edge</strong> 
+                    Divide cada arista en dos direcciones opuestas, almacenando punteros a: vértice destino, cara, siguiente arista, arista gemela y vértice origen.
+                </li>                
+            </ul>
+            <h3 id="beneficios_half_edge">2.3.2. Beneficios de half-Edge</h3>            
+            <ul>
+                <li>
+                    <strong>Nacegación O(1)</strong> 
+                    Acceso instantáneo a elementos adyacentes (ej. one-ring neighborhood)..
+                </li>
+                <li>
+                    <strong>Edición Robusta</strong> 
+                    Ideal para subdivisión y modificación dinámica de mallas..
+                </li>
+                <li>
+                    <strong>Consistencia</strong> 
+                    Garantiza la validez topológica en mallas manifold orientables.
+                </li>                 
+            </ul>
+        </section>
+
+        <section id="Calidad_metricas">
+            <h2>2.4. Calidad y Métricas de una malla poligonal</h2>
+            <h3 id="geometria_elementos">2.4.1 Geometría de los Elementos</h3>
+            <p>Se busca maximizar la regularidad de los triángulos. La Relación de Aspecto ideal es 1:1. Los triángulos deformes (slivers) deben evitarse, ya que distorsionan los cálculos físicos y la iluminación.</p>
+            <h3 id="integridad_topologica">2.4.2 Integridad Topológica (Manifold)</h3>
+            <p>La malla debe ser "cerrada" y lógica. Las aristas o vértices no manifold (donde convergen más de dos caras o geometrías desconectadas) son inválidos para impresión 3D y simulaciones, ya que crean ambigüedades sobre el interior y exterior del objeto.</p>          
+            <h3 id="orientacion_correcta">2.4.3 Orientación correcta</h3>
+            <p>Todas las caras deben estar orientadas coherentemente hacia fuera. Las normales invertidas causan glitches visuales durante el renderizado.</p>
+            <h3 id="optimizacion_densidad">2.4.4 Optimización de Densidad</h3>
+            <p>El número de polígonos debe ajustarse al detalle necesario. El exceso ralentiza el sistema; el defecto simplifica demasiado la forma, perdiendo detalles críticos.</p>
+        </section>
+
+        <section id="Aplicaciones_graficos">
+            <h2>2.5	Aplicaciones en gráficos por computadora y modelado 3D</h2>
+            <h3 id="entretenimiento_interactivo_tiempo_real">2.5.1 Entretenimiento Interactivo y Tiempo Real</h3>
+            <p>Dado que las GPUs están optimizadas para la rasterización de triángulos, las mallas constituyen la base de los videojuegos. Para equilibrar rendimiento y fidelidad visual, se combinan geometrías de baja resolución con técnicas de mapeado (normales y desplazamiento) que simulan micro-detalles superficiales sin incrementar la complejidad geométrica.</p>
+            <h3 id="fabricacion_aditiva_impresion_3d">2.5.2 Fabricación Aditiva (Impresión 3D)</h3>
+            <p>El formato STL (Stereolithography) utiliza exclusivamente mallas triangulares cerradas (watertight) para definir volúmenes imprimibles. En este contexto, la resolución de la malla determina directamente la precisión superficial y la calidad final del objeto fabricado.</p>          
+            <h3 id="digitalizacion_entornos_escaneo_3d_fotogrametria">2.5.3 Digitalización de Entornos (Escaneo 3D y Fotogrametría)</h3>
+            <p>Tecnologías como LiDAR y la fotogrametría capturan nubes de puntos densas del mundo real, las cuales se procesan mediante algoritmos de reconstrucción de superficies para generar mallas poligonales. Esto permite la creación de "gemelos digitales" fotorrealistas para arquitectura, cine y preservación cultural.</p>
+            <h3 id="ingenieria_simulacion_fisica">2.5.4 Ingeniería y Simulación Física</h3>
+            <p>En el análisis por Elementos Finitos (FEM), la malla poligonal sirve como dominio de discretización espacial. Sobre esta estructura se resuelven numéricamente ecuaciones diferenciales parciales, permitiendo modelar fenómenos físicos complejos como la distribución de tensiones mecánicas, la transferencia de calor o la dinámica de fluidos computacional (CFD).</p>
+        </section>
+    </main>
+
+    <!-- COLUMNA DERECHA: ÍNDICE FLOTANTE -->
+    <aside>
+        <div class="toc-container">
+            <span class="toc-title">Curvas Paramétricas y Mallas Poligonales</span>
+            <ul class="toc-list lado">
+                <li>
+                    <a href="#curvas_parame" class="toc-link">1. Curvas Paramétricas</a>
+                </li>
+                <li>
+                    <a href="#definicion" class="toc-link">1.1. Definición y Fundamentos</a>
+                </li>                
+                <li>
+                    <a href="#clasificacion" class="toc-link">1.2. Clasificación de Curvas</a>
+                    <ul class="toc-sublist">
+                        <li>
+                            <a href="#curvas_bezier" class="toc-link">1.2.1 Curvas de Bézier</a>
+                        </li>
+                        <li>
+                            <a href="#splines" class="toc-link">1.2.2. Splines y NURBS</a>
+                        </li>
+                    </ul>
+                </li>                
+                <li>
+                    <a href="#importancia_modelado_grafico" class="toc-link">1.3. Importancia en el Modelado Gráfico</a>
+                </li>
+                <li>
+                    <a href="#propiedades" class="toc-link">1.4. Propiedades y Ventajas</a>
+                </li>
+                <li>
+                    <a href="#aplicaciones_cad" class="toc-link">1.5. Aplicaciones en CAD</a>
+                </li>
+                <!-- ----------------------------------------------------------------- -->
+                <li>
+                    <a href="#mallas_poligonales" class="toc-link">2. Mallas Poligonales</a>
+                </li>                
+                <li>
+                    <a href="#vertices_aristas_caras" class="toc-link">2.1. Vertices, Aristas y Caras</a>
+                    <ul class="toc-sublist">
+                        <li>
+                            <a href="#vertices" class="toc-link">2.1.1. Vertices(V)</a>
+                        </li>
+                        <li>
+                            <a href="#aristas" class="toc-link">2.1.2. Aristas(E)</a>
+                        </li>
+                        <li>
+                            <a href="#caras" class="toc-link">2.1.3. Caras(F)</a>
+                        </li>
+                    </ul>
+                </li>                
+                <li>
+                    <a href="#tipos_mallas" class="toc-link">2.2. Tipos de mallas</a>
+                    <ul class="toc-sublist">
+                        <li>
+                            <a href="#mallas_regulares" class="toc-link">2.2.1. Mallas Regulares</a>
+                        </li>
+                        <li>
+                            <a href="#mallas_irregulares" class="toc-link">2.2.2. Mallas Irregulares</a>
+                        </li>                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#representacion_mallas" class="toc-link">2.3. Representación de Mallas</a>
+                    <ul class="toc-sublist">
+                        <li>
+                            <a href="#comparativa_estructuras" class="toc-link">2.3.1. Comparativa de Estructuras</a>
+                        </li>
+                        <li>
+                            <a href="#beneficios_half_edge" class="toc-link">2.3.2. Beneficios de Half-Edge</a>
+                        </li>                        
+                    </ul>
+                </li>
+                <li>
+                    <a href="#calidad_metricas" class="toc-link">2.4. Calidad y metricas de una Malla Poligonal</a>
+                    <ul class="toc-sublist">
+                        <li>
+                            <a href="#geometria_elementos" class="toc-link">2.4.1. Geometria de los Elementos</a>
+                        </li>
+                        <li>
+                            <a href="#integridad_topologica" class="toc-link">2.4.2. Integridad Topológica</a>
+                        </li>
+                        <li>
+                            <a href="#orientacion_correcta" class="toc-link">2.4.3. Orientación correcta</a>
+                        </li>
+                        <li>
+                            <a href="#optimizacion_densidad" class="toc-link">2.4.4. Optimización de Densidad</a>
+                        </li>                       
+                    </ul>
+                </li>
+                <li>
+                    <a href="#aplicaciones" class="toc-link">2.5. Aplicaciones en gráficos por computadora y modelado 3D</a>
+                    <ul class="toc-sublist">
+                        <li>
+                            <a href="#entretenimiento_interactivo" class="toc-link">2.5.1. entretenimiento Interactivo</a>
+                        </li>
+                        <li>
+                            <a href="#fabricacion_aditiva" class="toc-link">2.5.2. Fabricación Aditiva</a>
+                        </li>
+                        <li>
+                            <a href="#digitalizacion_entornos" class="toc-link">2.5.3. Digitalización de Entornos</a>
+                        </li>
+                        <li>
+                            <a href="#ingenieria_simulacion_fisica" class="toc-link">2.5.4. Ingeniería y Simulación Física</a>
+                        </li>                       
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </aside>
+
+</div>
+
+<script>
+    // Script para simular el comportamiento del video (Scroll Spy)
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('section, h3');
+        const navLi = document.querySelectorAll('.toc-link');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                // Ajuste de offset para que detecte un poco antes de llegar
+                if (pageYOffset >= (sectionTop - 150)) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLi.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href').includes(current) && current !== '') {
+                    a.classList.add('active');
+                }
+            });
+        });
+
+        // Smooth Scroll al hacer click
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
